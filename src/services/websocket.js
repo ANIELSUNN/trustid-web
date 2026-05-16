@@ -2,7 +2,7 @@
 //  TrustID — Dashboard Web — services/websocket.js
 // ============================================================
 
-const WS_URL = 'wss://trustid-backend.onrender.com';
+const WS_URL = 'wss://trustid-backend-l5pj.onrender.com';
 
 let socket = null;
 let callbacks = {};

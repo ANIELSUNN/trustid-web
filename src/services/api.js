@@ -5,8 +5,7 @@
 import axios from 'axios';
 
 // Même IP que le backend — adaptez selon votre config
-const BASE_URL = 'https://trustid-backend.onrender.com';
-
+const BASE_URL = 'https://trustid-backend-l5pj.onrender.com';
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,
