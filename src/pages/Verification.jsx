@@ -11,7 +11,7 @@ import { verifierSignature } from '../services/api';
 import { connecterWS, deconnecterWS } from '../services/websocket';
 import styles               from './Verification.module.css';
 
-export default function Verification() {
+export default function Verification  () {
   const [searchParams]                  = useSearchParams();
   const [signatureId,   setSignatureId] = useState('');
   const [resultat,      setResultat]    = useState(null);
@@ -24,7 +24,7 @@ export default function Verification() {
     const idUrl = searchParams.get('id');
     if (idUrl) {
       setSignatureId(idUrl);
-      verifierAvecId(idUrl);
+      verifier(idUrl);
     }
   }, []);
 
