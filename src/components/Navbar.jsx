@@ -7,7 +7,7 @@ import { NavLink }         from 'react-router-dom';
 import styles              from './Navbar.module.css';
 
 export default function Navbar() {
-  const [connecte, setConnecte] = useState(true);
+  const [connecte] = useState(true);
 
   return (
     <nav className={styles.nav}>

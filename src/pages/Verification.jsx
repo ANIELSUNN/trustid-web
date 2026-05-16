@@ -11,7 +11,7 @@ import { verifierSignature } from '../services/api';
 import { connecterWS, deconnecterWS } from '../services/websocket';
 import styles               from './Verification.module.css';
 
-export default function Verification  () {
+export default function Verification() {
   const [searchParams]                  = useSearchParams();
   const [signatureId,   setSignatureId] = useState('');
   const [resultat,      setResultat]    = useState(null);
@@ -24,8 +24,9 @@ export default function Verification  () {
     const idUrl = searchParams.get('id');
     if (idUrl) {
       setSignatureId(idUrl);
-      verifier(idUrl);
+      verifierAvecId(idUrl);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ----------------------------------------------------------------
@@ -45,22 +46,24 @@ export default function Verification  () {
   // ----------------------------------------------------------------
   // Vérification par ID
   // ----------------------------------------------------------------
-  async function verifier(id) {
-    const idNettoye = (id || signatureId).trim();
-    if (!idNettoye) return setErreur('Entrez un ID de signature.');
-
+  async function verifierAvecId(id) {
     setChargement(true);
     setErreur('');
     setResultat(null);
-
     try {
-      const data = await verifierSignature(idNettoye);
+      const data = await verifierSignature(id);
       setResultat(data);
     } catch (err) {
       setErreur(err.response?.data?.erreur || 'Signature introuvable.');
     } finally {
       setChargement(false);
     }
+  }
+
+  async function verifier(id) {
+    const idNettoye = (id || signatureId).trim();
+    if (!idNettoye) return setErreur('Entrez un ID de signature.');
+    await verifierAvecId(idNettoye);
   }
 
   // ----------------------------------------------------------------
