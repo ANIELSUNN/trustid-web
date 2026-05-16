@@ -1,0 +1,62 @@
+/* Verification.module.css */
+.page { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+.entete { margin-bottom: 32px; }
+.entete h1 { font-size: 28px; font-weight: 700; color: #1C1C1E; margin-bottom: 6px; }
+.entete p  { font-size: 15px; color: #8E8E93; }
+
+.grille { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 640px) { .grille { grid-template-columns: 1fr; } }
+
+.carte {
+  background: white; border-radius: 20px; padding: 24px;
+  border: 0.5px solid #E5E5EA;
+}
+.carte h2 { font-size: 17px; font-weight: 700; color: #1C1C1E; margin-bottom: 6px; }
+.desc { font-size: 13px; color: #8E8E93; margin-bottom: 16px; line-height: 1.5; }
+
+.inputRow { display: flex; gap: 8px; }
+.input {
+  flex: 1; background: #F2F2F7; border: 0.5px solid #E5E5EA;
+  border-radius: 10px; padding: 12px 14px; font-size: 14px;
+  color: #1C1C1E;
+}
+.input:focus { border-color: #0F6E56; background: white; }
+
+.bouton {
+  background: #0F6E56; color: white; border-radius: 10px;
+  padding: 12px 20px; font-size: 14px; font-weight: 600;
+  transition: opacity 0.15s;
+}
+.bouton:hover    { opacity: 0.85; }
+.bouton:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.erreur { color: #E24B4A; font-size: 13px; margin-top: 10px; }
+
+.drop {
+  border: 2px dashed #C7C7CC; border-radius: 14px;
+  padding: 32px; text-align: center; cursor: pointer;
+  transition: all 0.2s; color: #8E8E93;
+}
+.drop:hover  { border-color: #0F6E56; background: #F9FFFE; }
+.dropActif   { border-color: #0F6E56; background: #E1F5EE; color: #085041; }
+.dropIcone   { font-size: 32px; display: block; margin-bottom: 8px; }
+
+.notifLive {
+  position: fixed; top: 72px; right: 20px;
+  background: white; border-radius: 14px; padding: 16px 20px;
+  border-left: 4px solid #0F6E56; box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  display: flex; align-items: center; gap: 12px;
+  z-index: 999; max-width: 380px; animation: slideIn 0.3s ease;
+}
+.notifLive strong { font-size: 14px; font-weight: 700; color: #1C1C1E; }
+.notifLive p      { font-size: 12px; color: #8E8E93; margin-top: 2px; }
+.notifLive button {
+  background: #0F6E56; color: white; border-radius: 8px;
+  padding: 6px 12px; font-size: 13px; font-weight: 600; white-space: nowrap;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}

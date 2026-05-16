@@ -1,0 +1,51 @@
+/* Navbar.module.css */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 0 32px;
+  height: 60px;
+  border-bottom: 0.5px solid #E5E5EA;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.liens {
+  display: flex;
+  gap: 8px;
+}
+
+.liens a {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8E8E93;
+  transition: all 0.15s;
+}
+
+.liens a:hover { background: #F2F2F7; color: #1C1C1E; }
+.actif { background: #E1F5EE !important; color: #0F6E56 !important; }
+
+.statut {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #8E8E93;
+}
+
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dotVert  { background: #0F6E56; }
+.dotRouge { background: #E24B4A; }
