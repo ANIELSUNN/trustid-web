@@ -1,0 +1,370 @@
+/* ─── SignatureWorkspace.module.css ─────────────────────────────────────────── */
+
+:root {
+  --sw-green:        #00664f;
+  --sw-green-dark:   #004d3b;
+  --sw-green-light:  #e6f4f1;
+  --sw-green-border: #b3d9d2;
+  --sw-bg:           #f4f7f5;
+  --sw-white:        #ffffff;
+  --sw-text:         #1a2e28;
+  --sw-muted:        #6b8c85;
+  --sw-border:       #d0ddd9;
+  --sw-danger:       #c0392b;
+  --sw-amber:        #e67e22;
+  --sw-radius:       12px;
+  --sw-radius-sm:    8px;
+}
+
+/* ── Layout racine ── */
+.sw-root {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+  color: var(--sw-text);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* ── Card de base ── */
+.sw-card {
+  background: var(--sw-white);
+  border-radius: var(--sw-radius);
+  border: 1px solid var(--sw-border);
+  padding: 1.4rem 1.6rem;
+  box-shadow: 0 2px 12px rgba(0, 102, 79, 0.06);
+}
+
+/* ── Header ── */
+.sw-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.sw-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sw-title {
+  margin: 0 0 2px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sw-subtitle {
+  font-size: 0.82rem;
+  color: var(--sw-muted);
+}
+
+/* ── Boutons ── */
+.sw-btn-primary {
+  background: var(--sw-green);
+  color: #fff;
+  border: none;
+  border-radius: var(--sw-radius-sm);
+  padding: 0.65rem 1.3rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.sw-btn-primary:hover  { background: var(--sw-green-dark); }
+.sw-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.sw-btn-outline {
+  background: transparent;
+  color: var(--sw-green);
+  border: 1.5px solid var(--sw-green-border);
+  border-radius: var(--sw-radius-sm);
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.sw-btn-outline:hover {
+  background: var(--sw-green-light);
+}
+
+/* ── Section titles ── */
+.sw-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sw-text);
+}
+
+/* ── Badges ── */
+.sw-badge {
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.sw-badge--signed  { background: #e6f4f1; color: var(--sw-green); }
+.sw-badge--pending { background: #fff8e6; color: #a0620c; }
+.sw-badge--invited { background: #edf2ff; color: #2d4db5; }
+.sw-badge--refused { background: #fee8e8; color: var(--sw-danger); }
+
+/* ── Progress bar ── */
+
+
+.sw-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sw-progress-label { font-weight: 600; font-size: 0.92rem; }
+.sw-progress-pct   { font-weight: 700; color: var(--sw-green); }
+
+.sw-progress-track {
+  height: 8px;
+  background: var(--sw-green-light);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.sw-progress-fill {
+  height: 100%;
+  background: var(--sw-green);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.sw-progress-sub {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--sw-muted);
+}
+
+/* ── Document preview ── */
+.sw-doc-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sw-doc-body {
+  border: 1px solid var(--sw-border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  background: #fafcfb;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #2a3d35;
+}
+
+.sw-doc-title {
+  text-align: center;
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sw-doc-content {
+  margin: 0 0 1.5rem;
+}
+
+/* ── Zones de signature dans le doc ── */
+.sw-sig-zones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.sw-sig-zone {
+  border: 1.5px dashed var(--sw-border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  background: #fff;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: system-ui, sans-serif;
+}
+
+.sw-sig-zone--signed {
+  border-color: var(--sw-green);
+  background: var(--sw-green-light);
+}
+
+.sw-sig-zone-name        { font-size: 0.74rem; color: var(--sw-muted); }
+.sw-sig-zone-img         { max-width: 100%; height: 48px; object-fit: contain; }
+.sw-sig-zone-date        { font-size: 0.7rem; color: var(--sw-green); }
+.sw-sig-zone-placeholder { font-size: 0.76rem; color: var(--sw-muted); font-style: italic; }
+
+/* ── Zone de signature active ── */
+.sw-sign-action {
+  border: 2px solid var(--sw-green-border) !important;
+}
+
+.sw-sign-hint {
+  margin: 4px 0 1rem;
+  color: var(--sw-muted);
+  font-size: 0.86rem;
+}
+
+.sw-sig-preview {
+  margin-top: 1rem;
+}
+
+.sw-sig-preview-label {
+  font-size: 0.84rem;
+  color: var(--sw-muted);
+  margin: 0 0 6px;
+}
+
+.sw-sig-preview-img {
+  height: 60px;
+  border: 1px solid var(--sw-border);
+  border-radius: 8px;
+  padding: 4px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.sw-sig-preview-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Déjà signé ── */
+.sw-already-signed {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--sw-green-light) !important;
+  border-color: var(--sw-green-border) !important;
+}
+
+.sw-check-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--sw-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.sw-already-signed-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--sw-green);
+}
+
+.sw-already-signed-date {
+  margin: 3px 0 0;
+  font-size: 0.83rem;
+  color: var(--sw-muted);
+}
+
+/* ── Accès invité ── */
+.sw-guest-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-color: var(--sw-green-border) !important;
+  background: #f0faf7 !important;
+}
+
+.sw-guest-icon  { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+
+.sw-guest-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.sw-guest-sub {
+  margin: 0 0 12px;
+  font-size: 0.84rem;
+  color: var(--sw-muted);
+}
+
+/* ── Toast de succès ── */
+.sw-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--sw-green);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.9rem 1.4rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0, 102, 79, 0.3);
+  animation: sw-slide-in 0.25s ease;
+}
+
+@keyframes sw-slide-in {
+  from { transform: translateX(60px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── États loading / error ── */
+.sw-state-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 14px;
+  color: var(--sw-muted);
+  font-size: 0.95rem;
+}
+
+.sw-state-error { color: var(--sw-danger); }
+
+.sw-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--sw-green-light);
+  border-top-color: var(--sw-green);
+  border-radius: 50%;
+  animation: sw-spin 0.8s linear infinite;
+}
+
+@keyframes sw-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .sw-root      { padding: 1rem; }
+  .sw-title     { font-size: 1rem; white-space: normal; }
+  .sw-header    { gap: 10px; }
+  .sw-sig-zones { grid-template-columns: 1fr; }
+}
