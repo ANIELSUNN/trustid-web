@@ -3,13 +3,10 @@
 //  Créer une demande de signature multi-signataires
 // ============================================================
 import React, { useState, useEffect } from 'react';
-
-const API = 'http://localhost:5000';
+import { api } from '../services/api'; // Importation de l'instance configurée
 
 // ── Couleurs TrustID ──────────────────────────────────────────
 const GREEN  = '#00664f';
-const GREEN2 = '#004d3b';
-const BG     = '#f8f9fa';
 
 export default function MultiSignRequest({ user }) {
   const [tab, setTab]           = useState('creer');   // 'creer' | 'suivi'
@@ -25,9 +22,10 @@ export default function MultiSignRequest({ user }) {
   useEffect(() => {
     if (tab === 'suivi' && user?.email) {
       setLoadingDemandes(true);
-      fetch(`${API}/api/multisign/mes-demandes/${encodeURIComponent(user.email)}`)
-        .then(r => r.json())
-        .then(d => { if (d.success) setDemandes(d.demandes); })
+      api.get(`/api/multisign/mes-demandes/${encodeURIComponent(user.email)}`)
+        .then(res => { 
+          if (res.data.success) setDemandes(res.data.demandes); 
+        })
         .catch(() => {})
         .finally(() => setLoadingDemandes(false));
     }
@@ -46,28 +44,25 @@ export default function MultiSignRequest({ user }) {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch(`${API}/api/multisign/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          documentName: documentName.trim(),
-          documentHash: documentHash.trim(),
-          requestedBy:  user?.name  || user?.email || 'Utilisateur',
-          requestedByEmail: user?.email || '',
-          signatories:  validEmails,
-        }),
+      const res = await api.post('/api/multisign/create', {
+        documentName: documentName.trim(),
+        documentHash: documentHash.trim(),
+        requestedBy:  user?.name  || user?.email || 'Utilisateur',
+        requestedByEmail: user?.email || '',
+        signatories:  validEmails,
       });
-      const data = await res.json();
+      
+      const data = res.data; // Axios place la réponse dans .data
       setResult(data);
       if (data.success) { setDoc(''); setHash(''); setEmails(['']); }
-    } catch {
-      setResult({ success: false, message: 'Erreur réseau.' });
+    } catch (err) {
+      setResult({ success: false, message: 'Erreur réseau ou serveur.' });
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Styles ───────────────────────────────────────────────────
+  // ── Styles (inchangés) ───────────────────────────────────────
   const s = {
     wrap:    { maxWidth: 680, margin: '32px auto', padding: '0 16px', fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif' },
     tabs:    { display: 'flex', gap: 0, marginBottom: 24, borderBottom: `2px solid #e9ecef` },
@@ -93,113 +88,47 @@ export default function MultiSignRequest({ user }) {
 
   return (
     <div style={s.wrap}>
-      {/* Tabs */}
       <div style={s.tabs}>
-        <button style={s.tab(tab === 'creer')} onClick={() => setTab('creer')}>
-          ✍️  Nouvelle demande
-        </button>
-        <button style={s.tab(tab === 'suivi')} onClick={() => setTab('suivi')}>
-          📋 Mes demandes
-        </button>
+        <button style={s.tab(tab === 'creer')} onClick={() => setTab('creer')}>✍️ Nouvelle demande</button>
+        <button style={s.tab(tab === 'suivi')} onClick={() => setTab('suivi')}>📋 Mes demandes</button>
       </div>
 
-      {/* ── Onglet Créer ───────────────────────────────────── */}
       {tab === 'creer' && (
         <div style={s.card}>
           <h3 style={{ marginTop: 0, color: GREEN }}>Demande de signature</h3>
-
           <div style={{ marginBottom: 16 }}>
             <label style={s.label}>Nom du document</label>
             <input style={s.input} placeholder="ex: Contrat de prestation 2025" value={documentName} onChange={e => setDoc(e.target.value)} />
           </div>
-
           <div style={{ marginBottom: 20 }}>
             <label style={s.label}>Hash SHA-256 du document</label>
             <input style={s.input} placeholder="ex: a3f2c1..." value={documentHash} onChange={e => setHash(e.target.value)} />
-            <p style={{ fontSize: 12, color: '#6c757d', marginTop: 4 }}>
-              Générez le hash sur <a href="https://emn178.github.io/online-tools/sha256_checksum.html" target="_blank" rel="noreferrer" style={{ color: GREEN }}>cet outil</a> ou via votre application.
-            </p>
           </div>
-
           <div style={{ marginBottom: 20 }}>
             <label style={s.label}>Adresses email des signataires</label>
             {emails.map((email, i) => (
               <div key={i} style={s.row}>
-                <input
-                  style={s.input}
-                  type="email"
-                  placeholder={`signataire${i + 1}@email.com`}
-                  value={email}
-                  onChange={e => updateEmail(i, e.target.value)}
-                />
-                {emails.length > 1 && (
-                  <button style={s.btnRm} onClick={() => removeEmail(i)}>✕</button>
-                )}
+                <input style={s.input} type="email" placeholder={`signataire${i + 1}@email.com`} value={email} onChange={e => updateEmail(i, e.target.value)} />
+                {emails.length > 1 && <button style={s.btnRm} onClick={() => removeEmail(i)}>✕</button>}
               </div>
             ))}
             <button style={s.btnAdd} onClick={addEmail}>+ Ajouter un signataire</button>
           </div>
-
-          <button style={s.btnMain} onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Envoi en cours...' : '📨 Envoyer les invitations'}
-          </button>
-
-          {result && (
-            <div style={s.alert(result.success)}>
-              {result.success ? (
-                <>
-                  <strong>✅ {result.message}</strong>
-                  <ul style={{ margin: '8px 0 0', paddingLeft: 20 }}>
-                    {result.signatories?.map((s, i) => (
-                      <li key={i}>{s.email} — <em>{s.status}</em></li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <strong>❌ {result.message}</strong>
-              )}
-            </div>
-          )}
+          <button style={s.btnMain} onClick={handleSubmit} disabled={loading}>{loading ? 'Envoi...' : '📨 Envoyer les invitations'}</button>
+          {result && <div style={s.alert(result.success)}><strong>{result.success ? '✅' : '❌'} {result.message}</strong></div>}
         </div>
       )}
 
-      {/* ── Onglet Suivi ───────────────────────────────────── */}
       {tab === 'suivi' && (
         <div>
-          {loadingDemandes && <p style={{ color: '#6c757d', textAlign: 'center' }}>Chargement...</p>}
-          {!loadingDemandes && demandes.length === 0 && (
-            <div style={{ ...s.card, textAlign: 'center', color: '#6c757d' }}>
-              Aucune demande pour l'instant.
-            </div>
-          )}
+          {loadingDemandes && <p style={{ textAlign: 'center' }}>Chargement...</p>}
           {demandes.map(doc => (
             <div key={doc._id} style={s.docCard}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <strong style={{ fontSize: 15 }}>{doc.documentName}</strong>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: '#6c757d' }}>
-                    {new Date(doc.createdAt).toLocaleDateString('fr-FR')} · {doc.progression} signatures
-                  </p>
-                </div>
-                <span style={s.badge(doc.completed ? 'signe' : 'en_attente')}>
-                  {doc.completed ? '✅ Complet' : '⏳ En attente'}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div><strong>{doc.documentName}</strong></div>
+                <span style={s.badge(doc.completed ? 'signe' : 'en_attente')}>{doc.completed ? '✅ Complet' : '⏳ En attente'}</span>
               </div>
-
-              {/* Barre de progression */}
-              <div style={s.prog(percent(doc.progression))}>
-                <div style={s.progFill(percent(doc.progression))} />
-              </div>
-
-              {/* Liste signataires */}
-              <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {doc.signatories.map((s, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f8f9fa', padding: '4px 10px', borderRadius: 20, fontSize: 13 }}>
-                    <span>{s.status === 'signe' ? '✅' : '⏳'}</span>
-                    <span>{s.email}</span>
-                  </div>
-                ))}
-              </div>
+              <div style={s.prog(percent(doc.progression))}><div style={s.progFill(percent(doc.progression))} /></div>
             </div>
           ))}
         </div>
