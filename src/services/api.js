@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Instance partagée pour vos appels
 export const api = axios.create({
-  baseURL: 'http://localhost:5000', // Ou votre URL Render
+baseURL: process.env.REACT_APP_API_URL,// Ou votre URL Render
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
