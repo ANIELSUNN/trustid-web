@@ -1,15 +1,14 @@
 // ============================================================
 //  TrustID — src/components/MultiSignRequest.jsx
-//  Créer une demande de signature multi-signataires
+//  Version corrigée et sécurisée
 // ============================================================
 import React, { useState, useEffect } from 'react';
-import { api } from '../services/api'; // Importation de l'instance configurée
+import { api } from '../services/api';
 
-// ── Couleurs TrustID ──────────────────────────────────────────
 const GREEN  = '#00664f';
 
 export default function MultiSignRequest({ user }) {
-  const [tab, setTab]           = useState('creer');   // 'creer' | 'suivi'
+  const [tab, setTab]           = useState('creer');
   const [documentName, setDoc]  = useState('');
   const [documentHash, setHash] = useState('');
   const [emails, setEmails]     = useState(['']);
@@ -18,7 +17,6 @@ export default function MultiSignRequest({ user }) {
   const [demandes, setDemandes] = useState([]);
   const [loadingDemandes, setLoadingDemandes] = useState(false);
 
-  // Chargement des demandes existantes
   useEffect(() => {
     if (tab === 'suivi' && user?.email) {
       setLoadingDemandes(true);
@@ -52,7 +50,7 @@ export default function MultiSignRequest({ user }) {
         signatories:  validEmails,
       });
       
-      const data = res.data; // Axios place la réponse dans .data
+      const data = res.data;
       setResult(data);
       if (data.success) { setDoc(''); setHash(''); setEmails(['']); }
     } catch (err) {
@@ -62,11 +60,19 @@ export default function MultiSignRequest({ user }) {
     }
   };
 
-  // ── Styles (inchangés) ───────────────────────────────────────
+  // ── PROTECTION CORRIGÉE ─────────────────────────────────────
+  // La vérification (prog || "0/0") évite le crash si prog est undefined
+  const percent = (prog) => {
+    const safeProg = prog || "0/0"; 
+    const [a, b] = safeProg.split('/').map(Number);
+    return b && b !== 0 ? Math.round((a / b) * 100) : 0;
+  };
+  // ────────────────────────────────────────────────────────────
+
   const s = {
     wrap:    { maxWidth: 680, margin: '32px auto', padding: '0 16px', fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif' },
     tabs:    { display: 'flex', gap: 0, marginBottom: 24, borderBottom: `2px solid #e9ecef` },
-    tab:     (active) => ({ padding: '10px 24px', cursor: 'pointer', border: 'none', background: 'none', fontWeight: active ? 600 : 400, color: active ? GREEN : '#6c757d', borderBottom: active ? `2px solid ${GREEN}` : '2px solid transparent', marginBottom: -2, fontSize: 15 }),
+    tab:    (active) => ({ padding: '10px 24px', cursor: 'pointer', border: 'none', background: 'none', fontWeight: active ? 600 : 400, color: active ? GREEN : '#6c757d', borderBottom: active ? `2px solid ${GREEN}` : '2px solid transparent', marginBottom: -2, fontSize: 15 }),
     card:    { background: '#fff', borderRadius: 12, padding: 28, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' },
     label:   { display: 'block', marginBottom: 6, fontWeight: 500, fontSize: 14, color: '#212529' },
     input:   { width: '100%', padding: '10px 12px', border: '1px solid #ced4da', borderRadius: 8, fontSize: 15, boxSizing: 'border-box', outline: 'none', background: '#f8f9fa' },
@@ -79,11 +85,6 @@ export default function MultiSignRequest({ user }) {
     docCard: { background: '#fff', border: '1px solid #e9ecef', borderRadius: 10, padding: '16px 20px', marginBottom: 12 },
     prog:    (pct) => ({ height: 6, borderRadius: 3, background: '#e9ecef', overflow: 'hidden', marginTop: 8 }),
     progFill:(pct) => ({ height: '100%', borderRadius: 3, background: GREEN, width: `${pct}%`, transition: 'width 0.4s' }),
-  };
-
-  const percent = (prog) => {
-    const [a, b] = prog.split('/').map(Number);
-    return b ? Math.round((a / b) * 100) : 0;
   };
 
   return (
@@ -128,7 +129,7 @@ export default function MultiSignRequest({ user }) {
                 <div><strong>{doc.documentName}</strong></div>
                 <span style={s.badge(doc.completed ? 'signe' : 'en_attente')}>{doc.completed ? '✅ Complet' : '⏳ En attente'}</span>
               </div>
-              <div style={s.prog(percent(doc.progression))}><div style={s.progFill(percent(doc.progression))} /></div>
+              <div style={s.prog()}><div style={s.progFill(percent(doc.progression))} /></div>
             </div>
           ))}
         </div>
