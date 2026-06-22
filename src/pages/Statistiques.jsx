@@ -28,12 +28,19 @@ const donneesPie = [
 const COULEURS_PIE = ['#0F6E56', '#185FA5', '#854F0B', '#8E8E93'];
 
 export default function Statistiques({ userEmail, userId }) {
-  const [sante, setSante] = useState(null);
+  const [backendOk, setBackendOk] = useState(null);
 
   useEffect(() => {
     healthCheck()
-      .then(setSante)
-      .catch(() => setSante({ status: 'hors ligne' }));
+      .then((res) => {
+        // La route /health renvoie "OK"
+        if (res === 'OK') {
+          setBackendOk(true);
+        } else {
+          setBackendOk(false);
+        }
+      })
+      .catch(() => setBackendOk(false));
   }, []);
 
   const s = {
@@ -49,16 +56,14 @@ export default function Statistiques({ userEmail, userId }) {
     carteH2: { fontSize: 16, fontWeight: 700, color: '#1C1C1E', marginBottom: 20 },
   };
 
-  const backendOk = sante?.status === 'ok';
-
   const kpis = [
     { val: '29',   label: 'Signatures totales',  tendance: '+12 ce mois' },
-    { val: '100%', label: 'Taux de validité',     tendance: '0 rejet' },
-    { val: '1',    label: 'Utilisateurs actifs',  tendance: 'Ce mois' },
+    { val: '100%', label: 'Taux de validité',    tendance: '0 rejet' },
+    { val: '1',    label: 'Utilisateurs actifs', tendance: 'Ce mois' },
     {
-      val:      backendOk ? '✅' : '❌',
+      val:      backendOk === null ? '...' : backendOk ? '✅' : '❌',
       label:    'Statut backend',
-      tendance: sante ? (backendOk ? 'en ligne' : 'hors ligne') : '...',
+      tendance: backendOk === null ? '...' : backendOk ? 'en ligne' : 'hors ligne',
     },
   ];
 
@@ -73,7 +78,7 @@ export default function Statistiques({ userEmail, userId }) {
           <div key={i} style={s.carte}>
             <p style={s.kpiVal}>{k.val}</p>
             <p style={s.kpiLbl}>{k.label}</p>
-            <p style={{ ...s.kpiTnd, color: i === 3 && !backendOk ? '#E24B4A' : '#0F6E56' }}>
+            <p style={{ ...s.kpiTnd, color: i === 3 && backendOk === false ? '#E24B4A' : '#0F6E56' }}>
               {k.tendance}
             </p>
           </div>
