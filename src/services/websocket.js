@@ -1,8 +1,4 @@
-// ============================================================
-//  TrustID — Dashboard Web — services/websocket.js
-// ============================================================
-
-const WS_URL = 'wss://trustid-backend-l5pj.onrender.com';
+const WS_URL = 'wss://trustid-backend-production.up.railway.app'; // ✅ nouvelle URL Railway
 
 let socket = null;
 let callbacks = {};
@@ -20,8 +16,8 @@ function _connecter() {
   socket.onopen = () => {
     console.log('🔌 Dashboard WS connecté');
     socket.send(JSON.stringify({
-      type:       'identifier',
-      userId:     'dashboard',
+      type: 'identifier',
+      userId: 'dashboard',
       clientType: 'dashboard',
     }));
   };
