@@ -1,3 +1,4 @@
+// src/api.js
 import axios from 'axios';
 
 // ✅ URL par défaut si la variable Netlify n'est pas chargée
@@ -30,3 +31,12 @@ export const verifierSignature = (signatureId) => api.get(`/api/sign/verifier/${
 export const getHistorique = (userId, page) => api.get(`/api/sign/historique/${userId}`, { params: { page, limite: 10 } }).then(r => r.data);
 export const getAlertes = (userId) => api.get(`/api/sign/alertes/${userId}`).then(r => r.data);
 export const envoyerSignature = (data) => api.post('/api/sign/create', data).then(r => r.data);
+
+// ✅ Nouvelle fonction : upload de document (multipart/form-data)
+// Utilise FormData côté frontend : formData.append('document', file); formData.append('emails', 'a@b.com,b@c.com')
+export const uploadDocument = (formData) => {
+  return api.post('/api/multisign/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000 // plus long si upload lourd
+  }).then(r => r.data);
+};
