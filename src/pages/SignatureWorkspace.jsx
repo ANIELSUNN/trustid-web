@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
+
+import { jwtDecode } from 'jwt-decode';
+
 import axios from 'axios';
 
 export default function SignatureWorkspace() {
