@@ -1,20 +1,17 @@
-// src/api.js
+// src/services/api.js
 import axios from 'axios';
 
-// ✅ URL par défaut si la variable Netlify n'est pas chargée
 const API_URL = process.env.REACT_APP_API_URL || 'https://trustid-backend-production.up.railway.app';
 
-// ✅ Instance Axios partagée avec timeout augmenté
 export const api = axios.create({
   baseURL: API_URL,
-  timeout: 60000, // 60 secondes pour éviter les timeouts
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
 });
 
-// ✅ Intercepteur global pour journaliser les erreurs
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -23,7 +20,6 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ Fonctions exportées
 export const healthCheck = () => api.get('/health').then(r => r.data);
 export const getProfilPublic = (userId) => api.get(`/api/auth/profil/${userId}`).then(r => r.data);
 export const rechercherParEmail = (email) => api.get(`/api/auth/recherche`, { params: { email } }).then(r => r.data);
@@ -32,11 +28,10 @@ export const getHistorique = (userId, page) => api.get(`/api/sign/historique/${u
 export const getAlertes = (userId) => api.get(`/api/sign/alertes/${userId}`).then(r => r.data);
 export const envoyerSignature = (data) => api.post('/api/sign/create', data).then(r => r.data);
 
-// ✅ Nouvelle fonction : upload de document (multipart/form-data)
-// Utilise FormData côté frontend : formData.append('document', file); formData.append('emails', 'a@b.com,b@c.com')
+// Upload multipart/form-data
 export const uploadDocument = (formData) => {
   return api.post('/api/multisign/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 120000 // plus long si upload lourd
+    timeout: 120000
   }).then(r => r.data);
 };
