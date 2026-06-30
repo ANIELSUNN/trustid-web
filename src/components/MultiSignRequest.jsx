@@ -8,12 +8,12 @@ export default function MultiSignRequest() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file || !emails) {
+    if (!file || !emails.trim()) {
       return setMessage('⚠️ Fichier et emails requis');
     }
 
     const formData = new FormData();
-    formData.append('document', file);
+    formData.append('document', file); // ⚠️ doit correspondre à upload.single('document')
     formData.append('emails', emails);
 
     try {
@@ -31,7 +31,11 @@ export default function MultiSignRequest() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input type="file" onChange={e => setFile(e.target.files[0])} />
+        <input
+          type="file"
+          accept=".pdf" // ⚠️ limite aux PDF
+          onChange={e => setFile(e.target.files[0])}
+        />
         <input
           type="text"
           placeholder="emails séparés par ,"
