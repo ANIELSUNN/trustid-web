@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://trustid-backend-production.up.railway.app';
@@ -7,7 +6,6 @@ export const api = axios.create({
   baseURL: API_URL,
   timeout: 60000,
   headers: {
-    'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
 });
