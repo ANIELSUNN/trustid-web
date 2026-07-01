@@ -24,6 +24,7 @@ export default function Navbar() {
         <NavLink to="/profil"      className={({ isActive }) => isActive ? styles.actif : ''}>👤 Profil</NavLink>
         <NavLink to="/historique"  className={({ isActive }) => isActive ? styles.actif : ''}>📋 Historique</NavLink>
         <NavLink to="/statistiques" className={({ isActive }) => isActive ? styles.actif : ''}>📊 Stats</NavLink>
+        <NavLink to="/upload-sign" className={({ isActive }) => isActive ? styles.actif : ''}>⬆️ Upload & signer</NavLink>
       </div>
 
       <div className={styles.statut}>

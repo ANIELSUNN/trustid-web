@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Auth               from './components/Auth';
 import Navbar             from './components/Navbar';
 import MultiSignRequest   from './components/MultiSignRequest';
+import UploadAndSign      from './pages/UploadAndSign';
 import SignatureWorkspace from './pages/SignatureWorkspace';
 import Historique         from './pages/Historique';
 import Profil             from './pages/Profil';
@@ -82,6 +83,14 @@ export default function App() {
           element={
             userEmail
               ? <Statistiques userEmail={userEmail} userId={userId} />
+              : <Navigate to="/login" replace />
+          }
+        />
+        <Route
+          path="/upload-sign"
+          element={
+            userEmail
+              ? <UploadAndSign user={{ email: userEmail, id: userId }} />
               : <Navigate to="/login" replace />
           }
         />

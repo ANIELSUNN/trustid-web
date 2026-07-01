@@ -32,3 +32,9 @@ export const uploadDocument = (formData) => {
     timeout: 120000
   }).then(r => r.data);
 };
+
+export const uploadAndSign = (formData) => {
+  return api.post('/api/multisign/upload-and-sign', formData, {
+    timeout: 120000
+  }).then(r => r.data);
+};
