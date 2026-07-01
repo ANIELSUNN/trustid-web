@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import jwtDecode from 'jwt-decode';
+import { decode as jwtDecode } from 'jwt-decode';
 
 import axios from 'axios';
 
