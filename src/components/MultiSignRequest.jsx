@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { uploadDocument } from '../services/api';
 
-export default function MultiSignRequest() {
+export default function MultiSignRequest({ user }) {
   const [file, setFile] = useState(null);
   const [emails, setEmails] = useState('');
   const [message, setMessage] = useState('');
@@ -26,6 +26,17 @@ export default function MultiSignRequest() {
     const formData = new FormData();
     formData.append('document', file, file.name); // doit correspondre à upload.single('document')
     formData.append('emails', emailList.join(','));
+    formData.append('signataires', JSON.stringify(emailList));
+    formData.append('title', file.name);
+    formData.append('nomFichier', file.name);
+    if (user?.id) {
+      formData.append('userId', user.id);
+      formData.append('createdBy', user.id);
+    }
+    if (user?.email) {
+      formData.append('userEmail', user.email);
+      formData.append('ownerEmail', user.email);
+    }
 
     try {
       const res = await uploadDocument(formData);
@@ -34,8 +45,10 @@ export default function MultiSignRequest() {
       setFile(null);
       setEmails('');
     } catch (err) {
-      console.error('Upload error', err.response?.data || err.message);
-      setMessage(`❌ Erreur lors de l'upload: ${err.response?.data?.error || err.message}`);
+      const data = err.response?.data;
+      const detail = data?.details || data?.message || data?.erreur || data?.error || err.message;
+      console.error('Upload error', data || err.message);
+      setMessage(`❌ Erreur lors de l'upload: ${detail}`);
     }
   };
 
