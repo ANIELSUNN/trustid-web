@@ -1,4 +1,4 @@
-const WS_URL = 'wss://trustid-backend-production.up.railway.app'; // ✅ nouvelle URL Railway
+const WS_URL = process.env.REACT_APP_WS_URL || 'wss://trustid-backend-production.up.railway.app';
 
 let socket = null;
 let callbacks = {};

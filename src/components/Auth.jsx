@@ -44,7 +44,7 @@ export default function Auth({ onLoginSuccess }) {
     setLoading(true);
     setErreur('');
     try {
-      const BASE = process.env.REACT_APP_API_URL;
+      const BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
       // 1. Vérifie si le compte existe déjà
       const resRecherche = await fetch(

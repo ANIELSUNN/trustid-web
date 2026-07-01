@@ -1,6 +1,6 @@
 export default function SignDocument({ fileName }) {
-  // Cette URL pointe vers votre API qui sert le fichier
-  const downloadUrl = `https://trustid-backend-049u.onrender.com/api/multisign/download/${fileName}`;
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const downloadUrl = `${API_URL}/api/multisign/download/${fileName}`;
 
   return (
     <div>

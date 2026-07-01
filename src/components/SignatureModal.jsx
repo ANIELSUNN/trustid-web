@@ -7,7 +7,8 @@ export default function SignatureModal({ documentUrl, isOpen, onClose, documentI
 
   const handleSign = async () => {
     const signatureData = sigRef.current.toDataURL(); // Image base64
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/documents/${documentId}/sign`, {
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    const response = await fetch(`${API_URL}/api/documents/${documentId}/sign`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ signatureData }),
