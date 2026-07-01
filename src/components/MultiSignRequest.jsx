@@ -8,25 +8,33 @@ export default function MultiSignRequest({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const connectedEmail = user?.email?.trim().toLowerCase();
     const emailList = emails
       .split(/[\n,;]+/)
       .map(email => email.trim().toLowerCase())
       .filter(Boolean);
+    const uniqueEmails = [...new Set(emailList)];
+    const invitedEmails = connectedEmail
+      ? uniqueEmails.filter(email => email !== connectedEmail)
+      : uniqueEmails;
 
-    if (!file || emailList.length === 0) {
+    if (!file || uniqueEmails.length === 0) {
       return setMessage('⚠️ Fichier et emails requis');
     }
     if (file.type !== 'application/pdf') {
       return setMessage('⚠️ Le document doit être un PDF');
     }
-    if (emailList.some(email => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+    if (uniqueEmails.some(email => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
       return setMessage('⚠️ Vérifiez les adresses email');
+    }
+    if (invitedEmails.length === 0) {
+      return setMessage('⚠️ Ajoutez au moins un autre signataire que vous-même');
     }
 
     const formData = new FormData();
     formData.append('document', file, file.name); // doit correspondre à upload.single('document')
-    formData.append('emails', emailList.join(','));
-    formData.append('signataires', JSON.stringify(emailList));
+    formData.append('emails', invitedEmails.join(','));
+    formData.append('signataires', JSON.stringify(invitedEmails));
     formData.append('title', file.name);
     formData.append('nomFichier', file.name);
     if (user?.id) {
