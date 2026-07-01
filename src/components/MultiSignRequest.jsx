@@ -8,16 +8,24 @@ export default function MultiSignRequest() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file || !emails.trim()) {
+    const emailList = emails
+      .split(/[\n,;]+/)
+      .map(email => email.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (!file || emailList.length === 0) {
       return setMessage('⚠️ Fichier et emails requis');
     }
     if (file.type !== 'application/pdf') {
       return setMessage('⚠️ Le document doit être un PDF');
     }
+    if (emailList.some(email => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      return setMessage('⚠️ Vérifiez les adresses email');
+    }
 
     const formData = new FormData();
     formData.append('document', file, file.name); // doit correspondre à upload.single('document')
-    formData.append('emails', emails);
+    formData.append('emails', emailList.join(','));
 
     try {
       const res = await uploadDocument(formData);
@@ -32,19 +40,28 @@ export default function MultiSignRequest() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="file"
-          accept=".pdf" // ⚠️ limite aux PDF
-          onChange={e => setFile(e.target.files?.[0] || null)}
-        />
-        <input
-          type="text"
-          placeholder="emails séparés par ,"
-          value={emails}
-          onChange={e => setEmails(e.target.value)}
-        />
+    <div style={{ maxWidth: 560, padding: 24 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16 }}>
+        <label style={{ display: 'grid', gap: 8 }}>
+          <span>Télécharger le document (PDF)</span>
+          <input
+            type="file"
+            accept=".pdf" // ⚠️ limite aux PDF
+            onChange={e => setFile(e.target.files?.[0] || null)}
+          />
+        </label>
+
+        <label style={{ display: 'grid', gap: 8 }}>
+          <span>Emails des signataires</span>
+          <textarea
+            rows={5}
+            placeholder={'exemple1@email.com, exemple2@email.com\nou un email par ligne'}
+            value={emails}
+            onChange={e => setEmails(e.target.value)}
+            style={{ padding: 10, resize: 'vertical' }}
+          />
+        </label>
+
         <button type="submit">Envoyer pour signature</button>
       </form>
       {message && <p>{message}</p>}
