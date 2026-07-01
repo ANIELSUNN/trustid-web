@@ -90,9 +90,13 @@ export default function App() {
           element={<Verification />}
         />
 
-        {/* ── Route publique pour signer via token ──────────── */}
+        {/* ── Routes publiques pour signer via token ──────────── */}
         <Route
           path="/sign"
+          element={<SignatureWorkspace userEmail={userEmail} />}
+        />
+        <Route
+          path="/signer"
           element={<SignatureWorkspace userEmail={userEmail} />}
         />
 
