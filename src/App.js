@@ -9,6 +9,7 @@ import Navbar             from './components/Navbar';
 import MultiSignRequest   from './components/MultiSignRequest';
 import UploadAndSign      from './pages/UploadAndSign';
 import SignatureWorkspace from './pages/SignatureWorkspace';
+import SendGridTester     from './pages/SendGridTester';
 import Historique         from './pages/Historique';
 import Profil             from './pages/Profil';
 import Statistiques       from './pages/Statistiques';
@@ -91,6 +92,14 @@ export default function App() {
           element={
             userEmail
               ? <UploadAndSign user={{ email: userEmail, id: userId }} />
+              : <Navigate to="/login" replace />
+          }
+        />
+        <Route
+          path="/test-sendgrid"
+          element={
+            userEmail
+              ? <SendGridTester user={{ email: userEmail, id: userId }} />
               : <Navigate to="/login" replace />
           }
         />

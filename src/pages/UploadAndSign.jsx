@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import { uploadAndSign } from '../services/api';
 
+const colorOptions = [
+  { label: 'Noir', value: 'noir', code: '#000000' },
+  { label: 'Bleu', value: 'bleu', code: '#0F6E56' },
+  { label: 'Violet', value: 'violet', code: '#7C3AED' },
+  { label: 'Vert', value: 'vert', code: '#15803D' },
+  { label: 'Rouge', value: 'rouge', code: '#B91C1C' }
+];
+
 export default function UploadAndSign({ user }) {
   const [file, setFile] = useState(null);
   const [signature, setSignature] = useState('');
+  const [couleur, setCouleur] = useState('noir');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info');
 
@@ -22,6 +31,7 @@ export default function UploadAndSign({ user }) {
     const formData = new FormData();
     formData.append('document', file, file.name);
     formData.append('signature', signature.trim());
+    formData.append('couleur', couleur);
     formData.append('email', user?.email || 'utilisateur@trustid.local');
 
     try {
@@ -30,6 +40,7 @@ export default function UploadAndSign({ user }) {
       setMessage(`✅ Document téléversé et signé avec succès. ID : ${res.docId}`);
       setFile(null);
       setSignature('');
+      setCouleur('noir');
     } catch (err) {
       const data = err.response?.data;
       const detail = data?.details || data?.message || data?.erreur || data?.error || err.message;
@@ -66,13 +77,38 @@ export default function UploadAndSign({ user }) {
           </label>
 
           <label style={{ display: 'grid', gap: 10 }}>
+            <span style={{ fontWeight: 600, color: '#334155' }}>Couleur de signature</span>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              {colorOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setCouleur(option.value)}
+                  style={{
+                    minWidth: 80,
+                    padding: '10px 14px',
+                    borderRadius: 10,
+                    border: couleur === option.value ? '2px solid #111827' : '1px solid #CBD5E1',
+                    background: option.code,
+                    color: '#fff',
+                    cursor: 'pointer',
+                    fontWeight: 700
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </label>
+
+          <label style={{ display: 'grid', gap: 10 }}>
             <span style={{ fontWeight: 600, color: '#334155' }}>Signature</span>
             <textarea
               rows={5}
               placeholder="Tapez votre signature ici..."
               value={signature}
               onChange={e => setSignature(e.target.value)}
-              style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #CBD5E1', fontSize: 15, resize: 'vertical' }}
+              style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #CBD5E1', fontSize: 15, resize: 'vertical', color: colorOptions.find((option) => option.value === couleur)?.code || '#000000' }}
             />
           </label>
 
