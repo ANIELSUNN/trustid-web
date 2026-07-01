@@ -11,9 +11,12 @@ export default function MultiSignRequest() {
     if (!file || !emails.trim()) {
       return setMessage('⚠️ Fichier et emails requis');
     }
+    if (file.type !== 'application/pdf') {
+      return setMessage('⚠️ Le document doit être un PDF');
+    }
 
     const formData = new FormData();
-    formData.append('document', file); // ⚠️ doit correspondre à upload.single('document')
+    formData.append('document', file, file.name); // doit correspondre à upload.single('document')
     formData.append('emails', emails);
 
     try {
@@ -34,7 +37,7 @@ export default function MultiSignRequest() {
         <input
           type="file"
           accept=".pdf" // ⚠️ limite aux PDF
-          onChange={e => setFile(e.target.files[0])}
+          onChange={e => setFile(e.target.files?.[0] || null)}
         />
         <input
           type="text"

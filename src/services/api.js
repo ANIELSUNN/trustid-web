@@ -29,7 +29,6 @@ export const envoyerSignature = (data) => api.post('/api/sign/create', data).the
 // Upload multipart/form-data
 export const uploadDocument = (formData) => {
   return api.post('/api/multisign/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
     timeout: 120000
   }).then(r => r.data);
 };
