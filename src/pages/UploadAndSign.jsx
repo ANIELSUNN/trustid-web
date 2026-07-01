@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import SignatureCanvas from 'react-signature-canvas';
 import { uploadDocument } from '../services/api';
 
 const colorOptions = [
@@ -11,11 +12,11 @@ const colorOptions = [
 
 export default function UploadAndSign({ user }) {
   const [file, setFile] = useState(null);
-  const [signature, setSignature] = useState('');
   const [inviteEmails, setInviteEmails] = useState('');
   const [couleur, setCouleur] = useState('noir');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info');
+  const signatureCanvasRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,14 +38,17 @@ export default function UploadAndSign({ user }) {
       return setMessage('⚠️ Vérifiez les adresses email des signataires.');
     }
 
-    if (!signature.trim() && uniqueRecipients.length === 0) {
+    // Récupérer la signature du canvas
+    const signatureImage = signatureCanvasRef.current?.toDataURL() || '';
+    
+    if (!signatureImage || signatureImage === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==' && uniqueRecipients.length === 0) {
       setMessageType('error');
       return setMessage('⚠️ Vous devez signer vous-même ou inviter au moins un signataire.');
     }
 
     const formData = new FormData();
     formData.append('document', file, file.name);
-    formData.append('signature', signature.trim());
+    formData.append('signature', signatureImage);
     formData.append('couleur', couleur);
     formData.append('email', user?.email || 'utilisateur@trustid.local');
     formData.append('signataires', JSON.stringify(uniqueRecipients));
@@ -54,7 +58,7 @@ export default function UploadAndSign({ user }) {
       setMessageType('success');
       setMessage(`✅ Document téléversé avec succès. ID : ${res.docId}`);
       setFile(null);
-      setSignature('');
+      signatureCanvasRef.current?.clear();
       setInviteEmails('');
       setCouleur('noir');
     } catch (err) {
@@ -133,13 +137,30 @@ export default function UploadAndSign({ user }) {
 
           <label style={{ display: 'grid', gap: 10 }}>
             <span style={{ fontWeight: 600, color: '#334155' }}>Votre signature</span>
-            <textarea
-              rows={5}
-              placeholder="Tapez votre signature ici..."
-              value={signature}
-              onChange={e => setSignature(e.target.value)}
-              style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #CBD5E1', fontSize: 15, resize: 'vertical', color: colorOptions.find((option) => option.value === couleur)?.code || '#000000' }}
-            />
+            <div style={{ border: '2px solid #CBD5E1', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
+              <SignatureCanvas
+                ref={signatureCanvasRef}
+                canvasProps={{
+                  width: 640,
+                  height: 200,
+                  style: { display: 'block', cursor: 'crosshair', background: '#FFFFFF' }
+                }}
+                penColor={colorOptions.find((option) => option.value === couleur)?.code || '#000000'}
+                dotSize={3}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between' }}>
+              <button
+                type="button"
+                onClick={() => signatureCanvasRef.current?.clear()}
+                style={{ background: '#E2E8F0', color: '#334155', border: 'none', borderRadius: 10, padding: '10px 16px', cursor: 'pointer', fontWeight: 600, flex: 1 }}
+              >
+                Effacer
+              </button>
+              <span style={{ color: '#64748B', fontSize: 13, alignSelf: 'center' }}>
+                Dessinez votre signature dans la zone grise
+              </span>
+            </div>
           </label>
 
           <button type="submit" style={{ background: '#0F6E56', color: '#FFFFFF', border: 'none', borderRadius: 12, padding: '14px 20px', fontSize: 15, cursor: 'pointer' }}>

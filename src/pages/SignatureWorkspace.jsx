@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { jwtDecode } from 'jwt-decode';
+import SignatureCanvas from 'react-signature-canvas';
 
 import axios from 'axios';
 
@@ -17,9 +18,9 @@ export default function SignatureWorkspace() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const [email, setEmail] = useState('');
-  const [signature, setSignature] = useState('');
   const [couleur, setCouleur] = useState('noir');
   const [message, setMessage] = useState('');
+  const signatureCanvasRef = useRef(null);
 
   useEffect(() => {
     if (token) {
@@ -31,15 +32,19 @@ export default function SignatureWorkspace() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const signatureImage = signatureCanvasRef.current?.toDataURL() || '';
+      if (!signatureImage || signatureImage === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==') {
+        setMessage('⚠️ Veuillez signer dans la zone de dessin.');
+        return;
+      }
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const res = await axios.post(`${API_URL}/api/multisign/sign`, { token, signature, couleur });
+      const res = await axios.post(`${API_URL}/api/multisign/sign`, { token, signature: signatureImage, couleur });
       setMessage(res.data.message);
+      signatureCanvasRef.current?.clear();
     } catch (err) {
       setMessage(err.response?.data?.erreur || err.response?.data?.error || 'Erreur lors de la signature.');
     }
   };
-
-  const selectedColor = colorOptions.find((option) => option.value === couleur)?.code || '#000000';
 
   return (
     <div style={{ padding: '2rem', maxWidth: 720, margin: '0 auto' }}>
@@ -73,13 +78,30 @@ export default function SignatureWorkspace() {
 
         <label style={{ display: 'grid', gap: 10 }}>
           <span style={{ fontWeight: 600 }}>Votre signature</span>
-          <textarea
-            value={signature}
-            onChange={(e) => setSignature(e.target.value)}
-            placeholder="Écris ou colle ta signature ici..."
-            rows={6}
-            style={{ width: '100%', marginBottom: '1rem', borderRadius: 16, border: '1px solid #CBD5E1', padding: 16, fontSize: 15, color: selectedColor }}
-          />
+          <div style={{ border: '2px solid #CBD5E1', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
+            <SignatureCanvas
+              ref={signatureCanvasRef}
+              canvasProps={{
+                width: 620,
+                height: 180,
+                style: { display: 'block', cursor: 'crosshair', background: '#FFFFFF' }
+              }}
+              penColor={colorOptions.find((option) => option.value === couleur)?.code || '#000000'}
+              dotSize={3}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between' }}>
+            <button
+              type="button"
+              onClick={() => signatureCanvasRef.current?.clear()}
+              style={{ background: '#E2E8F0', color: '#334155', border: 'none', borderRadius: 10, padding: '10px 16px', cursor: 'pointer', fontWeight: 600, flex: 1 }}
+            >
+              Effacer
+            </button>
+            <span style={{ color: '#64748B', fontSize: 13, alignSelf: 'center' }}>
+              Dessinez votre signature
+            </span>
+          </div>
         </label>
 
         <button type="submit" style={{ background: '#0F6E56', color: '#fff', border: 'none', borderRadius: 12, padding: '14px 20px', cursor: 'pointer', fontWeight: 700 }}>
