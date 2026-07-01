@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { uploadAndSign } from '../services/api';
+import { uploadDocument } from '../services/api';
 
 const colorOptions = [
   { label: 'Noir', value: 'noir', code: '#000000' },
@@ -12,6 +12,7 @@ const colorOptions = [
 export default function UploadAndSign({ user }) {
   const [file, setFile] = useState(null);
   const [signature, setSignature] = useState('');
+  const [inviteEmails, setInviteEmails] = useState('');
   const [couleur, setCouleur] = useState('noir');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info');
@@ -23,9 +24,22 @@ export default function UploadAndSign({ user }) {
       setMessageType('error');
       return setMessage('⚠️ Veuillez sélectionner un fichier.');
     }
-    if (!signature.trim()) {
+
+    const recipients = inviteEmails
+      .split(/[,;\n]+/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+    const uniqueRecipients = [...new Set(recipients)];
+
+    const invalidEmails = uniqueRecipients.filter((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    if (invalidEmails.length > 0) {
       setMessageType('error');
-      return setMessage('⚠️ Veuillez ajouter une signature.');
+      return setMessage('⚠️ Vérifiez les adresses email des signataires.');
+    }
+
+    if (!signature.trim() && uniqueRecipients.length === 0) {
+      setMessageType('error');
+      return setMessage('⚠️ Vous devez signer vous-même ou inviter au moins un signataire.');
     }
 
     const formData = new FormData();
@@ -33,13 +47,15 @@ export default function UploadAndSign({ user }) {
     formData.append('signature', signature.trim());
     formData.append('couleur', couleur);
     formData.append('email', user?.email || 'utilisateur@trustid.local');
+    formData.append('signataires', JSON.stringify(uniqueRecipients));
 
     try {
-      const res = await uploadAndSign(formData);
+      const res = await uploadDocument(formData);
       setMessageType('success');
-      setMessage(`✅ Document téléversé et signé avec succès. ID : ${res.docId}`);
+      setMessage(`✅ Document téléversé avec succès. ID : ${res.docId}`);
       setFile(null);
       setSignature('');
+      setInviteEmails('');
       setCouleur('noir');
     } catch (err) {
       const data = err.response?.data;
@@ -77,6 +93,20 @@ export default function UploadAndSign({ user }) {
           </label>
 
           <label style={{ display: 'grid', gap: 10 }}>
+            <span style={{ fontWeight: 600, color: '#334155' }}>Inviter des signataires</span>
+            <textarea
+              rows={4}
+              placeholder="ajout@example.com, autre@example.com ou un email par ligne"
+              value={inviteEmails}
+              onChange={e => setInviteEmails(e.target.value)}
+              style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #CBD5E1', fontSize: 15, resize: 'vertical' }}
+            />
+            <span style={{ color: '#64748B', fontSize: 13 }}>
+              Optionnel : vous pouvez inviter d'autres personnes à signer après avoir signé vous-même.
+            </span>
+          </label>
+
+          <label style={{ display: 'grid', gap: 10 }}>
             <span style={{ fontWeight: 600, color: '#334155' }}>Couleur de signature</span>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {colorOptions.map((option) => (
@@ -102,7 +132,7 @@ export default function UploadAndSign({ user }) {
           </label>
 
           <label style={{ display: 'grid', gap: 10 }}>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Signature</span>
+            <span style={{ fontWeight: 600, color: '#334155' }}>Votre signature</span>
             <textarea
               rows={5}
               placeholder="Tapez votre signature ici..."
@@ -113,7 +143,7 @@ export default function UploadAndSign({ user }) {
           </label>
 
           <button type="submit" style={{ background: '#0F6E56', color: '#FFFFFF', border: 'none', borderRadius: 12, padding: '14px 20px', fontSize: 15, cursor: 'pointer' }}>
-            Téléverser et signer
+            Téléverser, signer et inviter
           </button>
         </form>
 
