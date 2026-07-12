@@ -13,13 +13,12 @@ const s = {
 
 export default function Historique({ userId }) {
   const [signatures, setSignatures] = useState([]);
-  const [pagination, setPagination] = useState({ pages: 1, total: 0 });
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState('');
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (userId) charger(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   async function charger(p = 1) {
@@ -32,8 +31,6 @@ export default function Historique({ userId }) {
       const nouvellesSignatures = Array.isArray(data?.signatures) ? data.signatures : [];
       
       setSignatures(p === 1 ? nouvellesSignatures : [...signatures, ...nouvellesSignatures]);
-      setPagination(data?.pagination || { pages: 1, total: 0 });
-      setPage(p);
     } catch (err) {
       setErreur(err.response?.data?.erreur || 'Erreur de chargement.');
     } finally {

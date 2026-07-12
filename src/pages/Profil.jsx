@@ -15,6 +15,7 @@ export default function Profil({ userEmail, userId }) {
   // Charge le profil de l'utilisateur connecté au montage
   useEffect(() => {
     if (userId) chargerProfilConnecte();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   async function chargerProfilConnecte() {

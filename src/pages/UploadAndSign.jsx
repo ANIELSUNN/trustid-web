@@ -41,7 +41,7 @@ export default function UploadAndSign({ user }) {
     // Récupérer la signature du canvas
     const signatureImage = signatureCanvasRef.current?.toDataURL() || '';
     
-    if (!signatureImage || signatureImage === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==' && uniqueRecipients.length === 0) {
+    if (!signatureImage || (signatureImage === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==' && uniqueRecipients.length === 0)) {
       setMessageType('error');
       return setMessage('⚠️ Vous devez signer vous-même ou inviter au moins un signataire.');
     }
