@@ -7,9 +7,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Auth               from './components/Auth';
 import Navbar             from './components/Navbar';
 import MultiSignRequest   from './components/MultiSignRequest';
+import Landing            from './pages/Landing';
 import UploadAndSign      from './pages/UploadAndSign';
 import SignatureWorkspace from './pages/SignatureWorkspace';
-import SendGridTester     from './pages/SendGridTester';
+import MailerTester       from './pages/MailerTester';
 import Historique         from './pages/Historique';
 import Profil             from './pages/Profil';
 import Statistiques       from './pages/Statistiques';
@@ -96,10 +97,10 @@ export default function App() {
           }
         />
         <Route
-          path="/test-sendgrid"
+          path="/test-mailer"
           element={
             userEmail
-              ? <SendGridTester user={{ email: userEmail, id: userId }} />
+              ? <MailerTester user={{ email: userEmail, id: userId }} />
               : <Navigate to="/login" replace />
           }
         />
@@ -124,7 +125,7 @@ export default function App() {
           element={
             userEmail
               ? <Navigate to="/dashboard" replace />
-              : <Navigate to="/login" replace />
+              : <Landing />
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />

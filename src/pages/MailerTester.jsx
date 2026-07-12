@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
 
-export default function SendGridTester({ user }) {
+export default function MailerTester({ user }) {
   const [email, setEmail] = useState(user?.email || '');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info');
 
-  const handleTestSendGrid = async () => {
+  const handleTestMailer = async () => {
     if (!email.trim()) {
       setMessageType('error');
       return setMessage('⚠️ Veuillez entrer une adresse email.');
@@ -17,7 +17,7 @@ export default function SendGridTester({ user }) {
     setMessage('');
 
     try {
-      const res = await api.post('/api/mailer/test-sendgrid', { email: email.trim() });
+      const res = await api.post('/api/mailer/test-mailer', { email: email.trim() });
       setMessageType('success');
       setMessage(`✅ ${res.data.message}`);
       setEmail('');
@@ -33,16 +33,16 @@ export default function SendGridTester({ user }) {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !loading) {
-      handleTestSendGrid();
+      handleTestMailer();
     }
   };
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', padding: 24, background: '#F8FAFC', borderRadius: 20, boxShadow: '0 18px 50px rgba(15, 23, 42, 0.08)' }}>
       <div style={{ background: '#fff', borderRadius: 18, padding: 28, border: '1px solid rgba(15, 23, 42, 0.08)' }}>
-        <h2 style={{ margin: 0, fontSize: 30, color: '#0F172A' }}>🧪 Tester SendGrid</h2>
+        <h2 style={{ margin: 0, fontSize: 30, color: '#0F172A' }}>🧪 Tester Gmail</h2>
         <p style={{ margin: '12px 0 24px', color: '#475569', fontSize: 15 }}>
-          Envoyez un email de test pour vérifier que votre configuration SendGrid est correcte.
+          Envoyez un email de test pour vérifier que votre configuration Gmail est correcte.
         </p>
 
         <div style={{ display: 'grid', gap: 16 }}>
@@ -67,7 +67,7 @@ export default function SendGridTester({ user }) {
           </label>
 
           <button
-            onClick={handleTestSendGrid}
+            onClick={handleTestMailer}
             disabled={loading}
             style={{
               background: loading ? '#94A3B8' : '#0F6E56',
@@ -108,13 +108,13 @@ export default function SendGridTester({ user }) {
           border: '1px solid #BAE6FD'
         }}>
           <p style={{ margin: 0, color: '#0C4A6E', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
-            💡 Comment vérifier votre configuration SendGrid
+            💡 Comment vérifier votre configuration Gmail
           </p>
           <ul style={{ margin: 0, color: '#0C4A6E', fontSize: 13, paddingLeft: 20, lineHeight: 1.8 }}>
-            <li><strong>SENDGRID_API_KEY</strong> doit être une clé API valide créée dans votre compte SendGrid</li>
-            <li><strong>SENDGRID_FROM_EMAIL</strong> doit être une adresse email vérifiée dans SendGrid</li>
+            <li><strong>GMAIL_CLIENT_ID</strong> / <strong>GMAIL_CLIENT_SECRET</strong> doivent correspondre au client OAuth Google configuré</li>
+            <li><strong>GMAIL_REFRESH_TOKEN</strong> doit être valide (généré via scripts/get-gmail-refresh-token.js côté backend)</li>
+            <li><strong>GMAIL_SENDER_EMAIL</strong> doit être l'adresse du compte Gmail de service qui a autorisé l'accès</li>
             <li>Si le test échoue, vérifiez vos variables d'environnement sur Railway</li>
-            <li>Consultez la console SendGrid pour voir les logs d'envoi</li>
           </ul>
         </div>
       </div>

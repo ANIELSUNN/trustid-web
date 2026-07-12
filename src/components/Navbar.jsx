@@ -25,7 +25,7 @@ export default function Navbar() {
         <NavLink to="/historique"  className={({ isActive }) => isActive ? styles.actif : ''}>📋 Historique</NavLink>
         <NavLink to="/statistiques" className={({ isActive }) => isActive ? styles.actif : ''}>📊 Stats</NavLink>
         <NavLink to="/upload-sign" className={({ isActive }) => isActive ? styles.actif : ''}>⬆️ Upload & signer</NavLink>
-        <NavLink to="/test-sendgrid" className={({ isActive }) => isActive ? styles.actif : ''}>🧪 Test SendGrid</NavLink>
+        <NavLink to="/test-mailer" className={({ isActive }) => isActive ? styles.actif : ''}>🧪 Test Gmail</NavLink>
       </div>
 
       <div className={styles.statut}>
