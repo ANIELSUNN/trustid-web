@@ -1,70 +1,90 @@
-# Getting Started with Create React App
+# TrustID Web
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Application frontend React pour la signature électronique de documents.
 
-## Available Scripts
+## Démarrage
 
-In the project directory, you can run:
+### Prérequis
+- Node.js (v14 ou supérieur)
+- npm ou yarn
 
-### `npm `
+### Installation
+```bash
+npm install
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Scripts disponibles
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### `npm start`
+Lance l'application en mode développement.
+Ouvrez [http://localhost:3000](http://localhost:3000) pour voir l'application dans votre navigateur.
 
-### `npm test`
+#### `npm run build`
+Construit l'application pour la production dans le dossier `build`.
+Les fichiers sont minifiés et prêts pour le déploiement.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### `npm test`
+Lance les tests en mode watch.
 
-### `npm run build`
+## Déploiement sur Vercel
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Ce projet est configuré pour être déployé sur [Vercel](https://vercel.com).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Configuration automatique
+Le fichier `vercel.json` est déjà configuré avec :
+- Build automatique via `@vercel/static-build`
+- Support du routing côté client (SPA)
+- Redirection vers `index.html` pour toutes les routes
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Déploiement manuel
 
-### `npm run eject`
+1. **Poussez votre code sur GitHub**
+   ```bash
+   git add .
+   git commit -m "Préparation pour Vercel"
+   git push origin main
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. **Connectez-vous à Vercel**
+   - Allez sur [vercel.com](https://vercel.com)
+   - Connectez-vous avec votre compte GitHub
+   - Cliquez sur "New Project"
+   - Importez votre repository `trustid-web`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. **Configurez les variables d'environnement**
+   Dans les paramètres du projet Vercel, ajoutez :
+   - `REACT_APP_API_URL` : `https://trustid-backend-production.up.railway.app`
+   - `REACT_APP_WS_URL` : `wss://trustid-backend-production.up.railway.app`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. **Déployez**
+   Vercel détectera automatiquement que c'est un projet React et configurera le build.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Variables d'environnement
 
-## Learn More
+Le fichier `.env` contient les variables suivantes :
+```
+REACT_APP_API_URL=https://trustid-backend-production.up.railway.app
+REACT_APP_WS_URL=wss://trustid-backend-production.up.railway.app
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Architecture
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **React 19** avec React Router v7
+- **Google OAuth** pour l'authentification
+- **Signature Canvas** pour la signature électronique
+- **WebSocket** pour la communication en temps réel
 
-### Code Splitting
+## Pages principales
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- `/login` - Authentification
+- `/dashboard` - Tableau de bord
+- `/upload-sign` - Téléchargement et signature de documents
+- `/historique` - Historique des signatures
+- `/profil` - Profil utilisateur
+- `/statistiques` - Statistiques
+- `/sign` - Espace de signature public (via token)
+- `/verifier` - Vérification de documents
 
-### Analyzing the Bundle Size
+## Backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Le backend est hébergé sur Railway : `https://trustid-backend-production.up.railway.app`
