@@ -12,6 +12,12 @@
   z-index: 100;
 }
 
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -19,7 +25,25 @@
   font-size: 18px;
   font-weight: 700;
   color: #1C1C1E;
+  margin-left: 6px;
 }
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #E5E5EA;
+  background: #FAFAFA;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1C1C1E;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.navBtn:hover { background: #E1F5EE; border-color: #B3D9D2; color: #0F6E56; }
 
 .liens {
   display: flex;

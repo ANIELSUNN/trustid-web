@@ -4,14 +4,16 @@
 // ============================================================
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams }  from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useDropzone }      from 'react-dropzone';
 import { QRCodeSVG }        from 'qrcode.react';
 import { verifierSignature } from '../services/api';
 import { connecterWS, deconnecterWS } from '../services/websocket';
+import TrustIDLogo          from '../components/TrustIDLogo';
 import styles               from './Verification.module.css';
 
 export default function Verification() {
+  const navigate                        = useNavigate();
   const [searchParams]                  = useSearchParams();
   const [signatureId,   setSignatureId] = useState('');
   const [resultat,      setResultat]    = useState(null);
@@ -98,6 +100,11 @@ export default function Verification() {
           <button onClick={() => verifier(notifLive.signatureId)}>Vérifier →</button>
         </div>
       )}
+
+      <div className={styles.topBar}>
+        <button type="button" className={styles.retour} onClick={() => navigate(-1)}>← Retour</button>
+        <Link to="/" className={styles.accueil}><TrustIDLogo size={26} /></Link>
+      </div>
 
       <div className={styles.entete}>
         <h1>Vérification de signature</h1>

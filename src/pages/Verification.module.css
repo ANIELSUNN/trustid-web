@@ -1,6 +1,15 @@
 /* Verification.module.css */
 .page { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
 
+.topBar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.retour {
+  border: 1px solid #E5E5EA; background: #FAFAFA; border-radius: 8px;
+  padding: 6px 14px; font-size: 13px; font-weight: 600; color: #1C1C1E;
+  cursor: pointer; transition: all 0.15s;
+}
+.retour:hover { background: #E1F5EE; border-color: #B3D9D2; color: #0F6E56; }
+.accueil { text-decoration: none; }
+
 .entete { margin-bottom: 32px; }
 .entete h1 { font-size: 28px; font-weight: 700; color: #1C1C1E; margin-bottom: 6px; }
 .entete p  { font-size: 15px; color: #8E8E93; }

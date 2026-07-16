@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 
 import { jwtDecode } from 'jwt-decode';
 import SignatureCanvas from 'react-signature-canvas';
 
 import axios from 'axios';
+import TrustIDLogo from '../components/TrustIDLogo';
 
 const colorOptions = [
   { label: 'Noir', value: 'noir', code: '#000000' },
@@ -46,69 +47,109 @@ export default function SignatureWorkspace() {
     }
   };
 
+  const succes = message.startsWith('✅') || (message && !message.startsWith('⚠️') && !message.startsWith('❌'));
+
   return (
-    <div style={{ padding: '2rem', maxWidth: 720, margin: '0 auto' }}>
-      <h2>Signature du document</h2>
-      <p>Signataire : <strong>{email}</strong></p>
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 18 }}>
-        <label style={{ display: 'grid', gap: 10 }}>
-          <span style={{ fontWeight: 600 }}>Couleur de signature</span>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {colorOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setCouleur(option.value)}
-                style={{
-                  minWidth: 80,
-                  padding: '10px 14px',
-                  borderRadius: 10,
-                  border: couleur === option.value ? '2px solid #111827' : '1px solid #CBD5E1',
-                  background: option.code,
-                  color: '#FFFFFF',
-                  cursor: 'pointer',
-                  fontWeight: 600
-                }}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </label>
+    <div style={{ minHeight: '100vh', background: '#f4f7f5', fontFamily: "'Instrument Sans', 'Segoe UI', system-ui, sans-serif", padding: '32px 20px' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div style={{ marginBottom: 24 }}>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <TrustIDLogo size={34} />
+          </Link>
+        </div>
 
-        <label style={{ display: 'grid', gap: 10 }}>
-          <span style={{ fontWeight: 600 }}>Votre signature</span>
-          <div style={{ border: '2px solid #CBD5E1', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
-            <SignatureCanvas
-              ref={signatureCanvasRef}
-              canvasProps={{
-                width: 620,
-                height: 180,
-                style: { display: 'block', cursor: 'crosshair', background: '#FFFFFF' }
-              }}
-              penColor={colorOptions.find((option) => option.value === couleur)?.code || '#000000'}
-              dotSize={3}
-            />
-          </div>
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between' }}>
+        <div style={{ background: '#ffffff', borderRadius: 20, padding: 32, boxShadow: '0 10px 30px rgba(0, 102, 79, 0.10)', border: '1px solid #d0ddd9' }}>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: '#1a2e28' }}>Signature du document</h1>
+          <p style={{ margin: '8px 0 28px', color: '#6b8c85', fontSize: 15 }}>
+            Signataire : <strong style={{ color: '#00664f' }}>{email || '—'}</strong>
+          </p>
+
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 22 }}>
+            <label style={{ display: 'grid', gap: 10 }}>
+              <span style={{ fontWeight: 700, color: '#1a2e28', fontSize: 14 }}>Couleur de signature</span>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {colorOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setCouleur(option.value)}
+                    style={{
+                      minWidth: 80,
+                      padding: '10px 14px',
+                      borderRadius: 10,
+                      border: couleur === option.value ? '2px solid #00664f' : '1px solid #d0ddd9',
+                      background: option.code,
+                      color: '#FFFFFF',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      boxShadow: couleur === option.value ? '0 0 0 3px #e6f4f1' : 'none',
+                      transition: 'box-shadow 0.15s',
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </label>
+
+            <label style={{ display: 'grid', gap: 10 }}>
+              <span style={{ fontWeight: 700, color: '#1a2e28', fontSize: 14 }}>Votre signature</span>
+              <div style={{ border: '2px dashed #b3d9d2', borderRadius: 14, overflow: 'hidden', background: '#f8faf9' }}>
+                <SignatureCanvas
+                  ref={signatureCanvasRef}
+                  canvasProps={{
+                    width: 620,
+                    height: 180,
+                    style: { display: 'block', width: '100%', height: 180, cursor: 'crosshair', background: '#f8faf9' }
+                  }}
+                  penColor={colorOptions.find((option) => option.value === couleur)?.code || '#000000'}
+                  dotSize={3}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => signatureCanvasRef.current?.clear()}
+                  style={{ background: 'transparent', color: '#00664f', border: '1.5px solid #b3d9d2', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}
+                >
+                  ✕ Effacer
+                </button>
+                <span style={{ color: '#6b8c85', fontSize: 13 }}>
+                  ✏️ Dessinez votre signature à la main
+                </span>
+              </div>
+            </label>
+
             <button
-              type="button"
-              onClick={() => signatureCanvasRef.current?.clear()}
-              style={{ background: '#E2E8F0', color: '#334155', border: 'none', borderRadius: 10, padding: '10px 16px', cursor: 'pointer', fontWeight: 600, flex: 1 }}
+              type="submit"
+              style={{ background: '#00664f', color: '#fff', border: 'none', borderRadius: 12, padding: '15px 20px', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}
             >
-              Effacer
+              Valider la signature
             </button>
-            <span style={{ color: '#64748B', fontSize: 13, alignSelf: 'center' }}>
-              Dessinez votre signature
-            </span>
-          </div>
-        </label>
+          </form>
 
-        <button type="submit" style={{ background: '#0F6E56', color: '#fff', border: 'none', borderRadius: 12, padding: '14px 20px', cursor: 'pointer', fontWeight: 700 }}>
-          Valider la signature
-        </button>
-      </form>
-      {message && <p style={{ marginTop: '1rem', color: '#0F6E56' }}>{message}</p>}
+          {message && (
+            <div
+              style={{
+                marginTop: 20,
+                padding: '14px 16px',
+                borderRadius: 12,
+                fontSize: 14,
+                lineHeight: 1.5,
+                background: succes ? '#e6f4f1' : '#fceceb',
+                color: succes ? '#00664f' : '#c0392b',
+                border: `1px solid ${succes ? '#b3d9d2' : '#f3c6c2'}`,
+              }}
+            >
+              {message}
+            </div>
+          )}
+        </div>
+
+        <p style={{ textAlign: 'center', color: '#6b8c85', fontSize: 12, marginTop: 20 }}>
+          TrustID — Identité Numérique Souveraine
+        </p>
+      </div>
     </div>
   );
 }
